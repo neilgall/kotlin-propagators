@@ -1,9 +1,6 @@
 package propagators.types
 
-import propagators.Cell
-import propagators.Content
-import propagators.Data
-import propagators.propagator
+import propagators.*
 
 object IntData: Data<Int> {
     override fun Int.isRedundant(other: Int): Boolean =
@@ -15,6 +12,9 @@ object IntData: Data<Int> {
             else
                 Content.Contradiction("$other !+ $this")
 }
+
+fun Scheduler.makeIntCell(name: String): Cell<Int> =
+    Cell(name, this, IntData)
 
 fun Int.Companion.adder(a: Cell<Int>, b: Cell<Int>, out: Cell<Int>) =
         propagator("+", a, b, out) { x, y -> x + y }

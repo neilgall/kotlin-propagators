@@ -1,9 +1,6 @@
 package propagators.types
 
-import propagators.Cell
-import propagators.Content
-import propagators.Data
-import propagators.propagator
+import propagators.*
 
 object DoubleData : Data<Double> {
     override fun Double.isRedundant(other: Double): Boolean =
@@ -15,6 +12,9 @@ object DoubleData : Data<Double> {
         else
             Content.Contradiction("$other !+ $this")
 }
+
+fun Scheduler.makeDoubleCell(name: String): Cell<Double> =
+    Cell(name, this, DoubleData)
 
 fun Double.Companion.adder(a: Cell<Double>, b: Cell<Double>, out: Cell<Double>) =
     propagator("+", a, b, out) { x, y -> x + y }
@@ -38,4 +38,9 @@ fun Double.Companion.product(a: Cell<Double>, b: Cell<Double>, product: Cell<Dou
     multiplier(a, b, product)
     divider(product, a, b)
     divider(product, b, a)
+}
+
+fun Double.Companion.quadratic(a: Cell<Double>, square: Cell<Double>) {
+    propagator("square", a, square) { x -> x * x }
+    propagator("sqrt", square, a) { x -> Math.sqrt(x) }
 }

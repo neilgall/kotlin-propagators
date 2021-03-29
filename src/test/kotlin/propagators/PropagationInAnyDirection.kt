@@ -2,7 +2,7 @@ package propagators
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import propagators.types.IntData
+import propagators.types.makeIntCell
 import propagators.types.product
 import propagators.types.sum
 
@@ -10,9 +10,9 @@ class PropagationInAnyDirection : StringSpec({
 
     "sum forward" {
         QueueScheduler().run {
-            val a = Cell("a", this, IntData)
-            val b = Cell("b", this, IntData)
-            val c = Cell("c", this, IntData)
+            val a = makeIntCell("a")
+            val b = makeIntCell("b")
+            val c = makeIntCell("c")
             Int.sum(a, b, c)
             a.addContent(123)
             b.addContent(42)
@@ -23,9 +23,9 @@ class PropagationInAnyDirection : StringSpec({
 
     "sum backward lhs" {
         QueueScheduler().run {
-            val a = Cell("a", this, IntData)
-            val b = Cell("b", this, IntData)
-            val c = Cell("c", this, IntData)
+            val a = makeIntCell("a")
+            val b = makeIntCell("b")
+            val c = makeIntCell("c")
             Int.sum(a, b, c)
             b.addContent(42)
             c.addContent(165)
@@ -36,9 +36,9 @@ class PropagationInAnyDirection : StringSpec({
 
     "sum backward rhs" {
         QueueScheduler().run {
-            val a = Cell("a", this, IntData)
-            val b = Cell("b", this, IntData)
-            val c = Cell("c", this, IntData)
+            val a = makeIntCell("a")
+            val b = makeIntCell("b")
+            val c = makeIntCell("c")
             Int.sum(a, b, c)
             a.addContent(123)
             c.addContent(165)
@@ -49,9 +49,9 @@ class PropagationInAnyDirection : StringSpec({
 
     "product forward" {
         QueueScheduler().run {
-            val a = Cell("a", this, IntData)
-            val b = Cell("b", this, IntData)
-            val c = Cell("c", this, IntData)
+            val a = makeIntCell("a")
+            val b = makeIntCell("b")
+            val c = makeIntCell("c")
             Int.product(a, b, c)
             a.addContent(123)
             b.addContent(42)
@@ -62,9 +62,9 @@ class PropagationInAnyDirection : StringSpec({
 
     "product backward lhs" {
         QueueScheduler().run {
-            val a = Cell("a", this, IntData)
-            val b = Cell("b", this, IntData)
-            val c = Cell("c", this, IntData)
+            val a = makeIntCell("a")
+            val b = makeIntCell("b")
+            val c = makeIntCell("c")
             Int.product(a, b, c)
             b.addContent(42)
             c.addContent(5166)
@@ -75,9 +75,9 @@ class PropagationInAnyDirection : StringSpec({
 
     "product backward rhs" {
         QueueScheduler().run {
-            val a = Cell("a", this, IntData)
-            val b = Cell("b", this, IntData)
-            val c = Cell("c", this, IntData)
+            val a = makeIntCell("a")
+            val b = makeIntCell("b")
+            val c = makeIntCell("c")
             Int.product(a, b, c)
             a.addContent(123)
             c.addContent(5166)
