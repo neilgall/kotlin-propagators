@@ -16,14 +16,9 @@ sealed class Content<out T> {
 
 sealed class MergeResult<out T> {
     object Redundant: MergeResult<Nothing>()
-    data class Value<T>(val value: T): MergeResult<T>()
+    data class Merged<T>(val value: T): MergeResult<T>()
+    data class Replaced<T>(val value: T): MergeResult<T>()
     data class Contradiction(val contradiction: ContradictionInfo): MergeResult<Nothing>()
-
-    fun <U> biMap(vf: (T) -> U, cf: (ContradictionInfo) -> ContradictionInfo): MergeResult<U> = when(this) {
-        is Redundant -> Redundant
-        is Value<T> -> Value(vf(value))
-        is Contradiction -> Contradiction(cf(contradiction))
-    }
 }
 
 interface Data<T> {

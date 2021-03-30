@@ -20,8 +20,8 @@ class BuildingHeightExample: StringSpec({
         s2: Cell<ClosedRange<Double>>,
         h2: Cell<ClosedRange<Double>>) {
         val ratio = makeDoubleRangeCell("ratio")
-        doubleClosedRangeProduct(s1, ratio, h1)
-        doubleClosedRangeProduct(s2, ratio, h2)
+        doubleClosedRangeProduct.apply(s1, ratio, h1)
+        doubleClosedRangeProduct.apply(s2, ratio, h2)
     }
 
     class Fixture {
@@ -42,9 +42,9 @@ class BuildingHeightExample: StringSpec({
         init {
             constant(9.789.rangeTo(9.832), g)
             constant(0.5.rangeTo(0.5), half)
-            doubleClosedRangeQuadratic(fallTime, tSq)
-            doubleClosedRangeProduct(g, tSq, gtSq)
-            doubleClosedRangeProduct(half, gtSq, buildingHeight)
+            doubleClosedRangeQuadratic.apply(fallTime, tSq)
+            doubleClosedRangeProduct.apply(g, tSq, gtSq)
+            doubleClosedRangeProduct.apply(half, gtSq, buildingHeight)
 
             scheduler.similarTriangles(barometerShadow, barometerHeight, buildingShadow, buildingHeight)
         }

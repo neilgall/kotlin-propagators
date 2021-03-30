@@ -26,15 +26,18 @@ class Cell<T>(private val name: String, private val scheduler: Scheduler, privat
                 // do nothing
             }
             is Content.Value<T> -> data.run {
-                when (val merged = oldContent.value.merge(newContent)) {
+                when (val result = oldContent.value.merge(newContent)) {
                     is MergeResult.Redundant -> {
                         // do nothing
                     }
-                    is MergeResult.Value<T> -> {
-                        content = Content.Value(merged.value)
+                    is MergeResult.Merged<T> -> {
+                        content = Content.Value(result.value)
+                    }
+                    is MergeResult.Replaced<T> -> {
+                        content = Content.Value(result.value)
                     }
                     is MergeResult.Contradiction -> {
-                        content = Content.Contradiction(merged.contradiction)
+                        content = Content.Contradiction(result.contradiction)
                     }
                 }
             }

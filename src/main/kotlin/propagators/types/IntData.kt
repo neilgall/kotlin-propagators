@@ -2,7 +2,7 @@ package propagators.types
 
 import propagators.*
 
-object IntData: Data<Int> {
+object IntData : Data<Int> {
     override fun Int.merge(other: Int): MergeResult<Int> =
         if (this == other)
             MergeResult.Redundant
@@ -10,17 +10,15 @@ object IntData: Data<Int> {
             MergeResult.Contradiction("$other != $this")
 }
 
-fun intSum(a: Cell<Int>, b: Cell<Int>, c: Cell<Int>) =
-    propagator(a, b, c,
-        abc = Int::plus,
-        cab = Int::minus,
-        cba = Int::minus
-    )
+val intSum = Propagator2<Int, Int, Int>(
+    abc = Int::plus,
+    cab = Int::minus,
+    cba = Int::minus
+)
 
 
-fun intProduct(a: Cell<Int>, b:Cell<Int>, c: Cell<Int>) =
-    propagator(a, b, c,
-        abc = Int::times,
-        cab = Int::div,
-        cba = Int::div
-    )
+val intProduct = Propagator2<Int, Int, Int>(
+    abc = Int::times,
+    cab = Int::div,
+    cba = Int::div
+)

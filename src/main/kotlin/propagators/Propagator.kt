@@ -43,13 +43,17 @@ fun <A: Any> constant(value: A, output: Cell<A>) {
     }
 }
 
-fun <A, B> propagator(a: Cell<A>, b: Cell<B>, ab: (A) -> B, ba: (B) -> A) {
-    propagator(a, b, ab)
-    propagator(b, a, ba)
+class Propagator1<A, B>(val ab: (A) -> B, val ba: (B) -> A)  {
+    fun apply(a: Cell<A>, b: Cell<B>) {
+        propagator(a, b, ab)
+        propagator(b, a, ba)
+    }
 }
 
-fun <A, B, C> propagator(a: Cell<A>, b: Cell<B>, c: Cell<C>, abc: (A, B) -> C, cab: (C, A) -> B, cba: (C, B) -> A) {
-    propagator(a, b, c, abc)
-    propagator(c, a, b, cab)
-    propagator(c, b, a, cba)
+class Propagator2<A, B, C>(val abc: (A, B) -> C, val cab: (C, A) -> B, val cba: (C, B) -> A) {
+    fun apply(a: Cell<A>, b: Cell<B>, c: Cell<C>) {
+        propagator(a, b, c, abc)
+        propagator(c, a, b, cab)
+        propagator(c, b, a, cba)
+    }
 }

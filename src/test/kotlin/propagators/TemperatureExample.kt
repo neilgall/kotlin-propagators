@@ -21,9 +21,9 @@ class TemperatureExample: StringSpec({
         constant(32.0, thirtyTwo)
         constant(5.0, five)
         constant(9.0, nine)
-        doubleSum(thirtyTwo, fMinus32, f)
-        doubleProduct(fMinus32, five, cTimes9)
-        doubleProduct(c, nine, cTimes9)
+        doubleSum.apply(thirtyTwo, fMinus32, f)
+        doubleProduct.apply(fMinus32, five, cTimes9)
+        doubleProduct.apply(c, nine, cTimes9)
         return Pair(f, c)
     }
 
