@@ -5,26 +5,25 @@ import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.beInstanceOf
-import propagators.types.makeDoubleCell
-import propagators.types.product
-import propagators.types.sum
+import propagators.types.*
 
 class TemperatureExample: StringSpec({
 
     fun Scheduler.fahrenheitCelcius(): Pair<Cell<Double>, Cell<Double>> {
-        val f = makeDoubleCell("f")
-        val c = makeDoubleCell("c")
-        val thirtyTwo = makeDoubleCell("thirtyTwo")
-        val fMinus32 = makeDoubleCell("f-32")
-        val cTimes9 = makeDoubleCell("c*9")
-        val five = makeDoubleCell("five")
-        val nine = makeDoubleCell("nine")
+        val makeCell = cellFactory(DoubleData)
+        val f = makeCell("f")
+        val c = makeCell("c")
+        val thirtyTwo = makeCell("thirtyTwo")
+        val fMinus32 = makeCell("f-32")
+        val cTimes9 = makeCell("c*9")
+        val five = makeCell("five")
+        val nine = makeCell("nine")
         constant(32.0, thirtyTwo)
         constant(5.0, five)
         constant(9.0, nine)
-        Double.sum(thirtyTwo, fMinus32, f)
-        Double.product(fMinus32, five, cTimes9)
-        Double.product(c, nine, cTimes9)
+        doubleSum(thirtyTwo, fMinus32, f)
+        doubleProduct(fMinus32, five, cTimes9)
+        doubleProduct(c, nine, cTimes9)
         return Pair(f, c)
     }
 

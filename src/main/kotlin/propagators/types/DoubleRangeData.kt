@@ -3,8 +3,8 @@ package propagators.types
 import propagators.*
 import kotlin.math.pow
 
-object DoubleRangeData : Data<ClosedRange<Double>> {
-    override fun ClosedRange<Double>.merge(other: ClosedRange<Double>): MergeResult<ClosedRange<Double>> {
+class ClosedRangeData<T: Comparable<T>> : Data<ClosedRange<T>> {
+    override fun ClosedRange<T>.merge(other: ClosedRange<T>): MergeResult<ClosedRange<T>> {
         val intersectLow = contains(other.start)
         val intersectHigh = contains(other.endInclusive)
         return if (intersectLow && intersectHigh)
@@ -16,42 +16,28 @@ object DoubleRangeData : Data<ClosedRange<Double>> {
     }
 }
 
-fun Scheduler.makeDoubleRangeCell(name: String) =
-    Cell(name, this, DoubleRangeData)
+operator fun ClosedRange<Double>.times(other: ClosedRange<Double>): ClosedRange<Double> =
+    (start * other.start).rangeTo(endInclusive * other.endInclusive)
 
-fun DoubleRangeData.rangeMultiplier(
-    a: Cell<ClosedRange<Double>>,
-    b: Cell<ClosedRange<Double>>,
-    c: Cell<ClosedRange<Double>>
-) =
-    propagator("*", a, b, c) { r1: ClosedRange<Double>, r2: ClosedRange<Double> ->
-        (r1.start * r2.start).rangeTo(r1.endInclusive * r2.endInclusive)
-    }
+operator fun ClosedRange<Double>.div(other: ClosedRange<Double>): ClosedRange<Double> =
+    (start / other.endInclusive).rangeTo(endInclusive / other.start)
 
-fun DoubleRangeData.rangeDivider(
-    a: Cell<ClosedRange<Double>>,
-    b: Cell<ClosedRange<Double>>,
-    c: Cell<ClosedRange<Double>>
-) =
-    propagator("/", a, b, c) { r1: ClosedRange<Double>, r2: ClosedRange<Double> ->
-        (r1.start / r2.endInclusive).rangeTo(r1.endInclusive / r2.start)
-    }
+fun ClosedRange<Double>.sqrt(): ClosedRange<Double> =
+    Math.sqrt(start).rangeTo(Math.sqrt(endInclusive))
 
-fun DoubleRangeData.product(
-    a: Cell<ClosedRange<Double>>,
-    b: Cell<ClosedRange<Double>>,
-    c: Cell<ClosedRange<Double>>
-) {
-    rangeMultiplier(a, b, c)
-    rangeDivider(c, a, b)
-    rangeDivider(c, b, a)
-}
+fun ClosedRange<Double>.pow(x: Double): ClosedRange<Double> =
+    start.pow(x).rangeTo(endInclusive.pow(x))
 
-fun DoubleRangeData.quadratic(a: Cell<ClosedRange<Double>>, b: Cell<ClosedRange<Double>>) {
-    propagator("square", a, b) { x: ClosedRange<Double> ->
-        (x.start.pow(2)).rangeTo(x.endInclusive.pow(2))
-    }
-    propagator("sqrt", b, a) { x: ClosedRange<Double> ->
-        (Math.sqrt(x.start)).rangeTo(Math.sqrt(x.endInclusive))
-    }
-}
+
+fun doubleClosedRangeProduct(a: Cell<ClosedRange<Double>>, b: Cell<ClosedRange<Double>>, c: Cell<ClosedRange<Double>>) =
+    propagator(a, b, c,
+        abc = ClosedRange<Double>::times,
+        cab = ClosedRange<Double>::div,
+        cba = ClosedRange<Double>::div
+    )
+
+fun doubleClosedRangeQuadratic(a: Cell<ClosedRange<Double>>, b: Cell<ClosedRange<Double>>) =
+    propagator(a, b,
+        ab = { x -> (x.start.pow(2)).rangeTo(x.endInclusive.pow(2)) },
+        ba = { x -> (Math.sqrt(x.start)).rangeTo(Math.sqrt(x.endInclusive)) }
+    )

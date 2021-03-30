@@ -10,29 +10,17 @@ object IntData: Data<Int> {
             MergeResult.Contradiction("$other != $this")
 }
 
-fun Scheduler.makeIntCell(name: String): Cell<Int> =
-    Cell(name, this, IntData)
+fun intSum(a: Cell<Int>, b: Cell<Int>, c: Cell<Int>) =
+    propagator(a, b, c,
+        abc = Int::plus,
+        cab = Int::minus,
+        cba = Int::minus
+    )
 
-fun Int.Companion.adder(a: Cell<Int>, b: Cell<Int>, out: Cell<Int>) =
-        propagator("+", a, b, out) { x, y -> x + y }
 
-fun Int.Companion.subtractor(a: Cell<Int>, b: Cell<Int>, out: Cell<Int>) =
-        propagator("-", a, b, out) { x, y -> x - y }
-
-fun Int.Companion.multiplier(a: Cell<Int>, b: Cell<Int>, out: Cell<Int>) =
-    propagator("*", a, b, out) { x, y -> x * y }
-
-fun Int.Companion.divider(a: Cell<Int>, b: Cell<Int>, out: Cell<Int>) =
-    propagator("/", a, b, out) { x, y -> x / y }
-
-fun Int.Companion.sum(a: Cell<Int>, b: Cell<Int>, out: Cell<Int>) {
-    adder(a, b, out)
-    subtractor(out, a, b)
-    subtractor(out, b, a)
-}
-
-fun Int.Companion.product(a: Cell<Int>, b:Cell<Int>, out: Cell<Int>) {
-    multiplier(a, b, out)
-    divider(out, a, b)
-    divider(out, b, a)
-}
+fun intProduct(a: Cell<Int>, b:Cell<Int>, c: Cell<Int>) =
+    propagator(a, b, c,
+        abc = Int::times,
+        cab = Int::div,
+        cba = Int::div
+    )

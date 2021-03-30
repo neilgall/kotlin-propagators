@@ -41,3 +41,9 @@ class Cell<T>(private val name: String, private val scheduler: Scheduler, privat
         }
     }
 }
+
+typealias CellFactory<T> = (String) -> Cell<T>
+
+fun <T> Scheduler.cellFactory(data: Data<T>): CellFactory<T> = {
+    name -> Cell(name, this, data)
+}

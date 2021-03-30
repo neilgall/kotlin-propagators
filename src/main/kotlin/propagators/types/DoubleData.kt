@@ -10,34 +10,22 @@ object DoubleData : Data<Double> {
             MergeResult.Contradiction("$other != $this")
 }
 
-fun Scheduler.makeDoubleCell(name: String): Cell<Double> =
-    Cell(name, this, DoubleData)
+fun doubleSum(a: Cell<Double>, b: Cell<Double>, sum: Cell<Double>) =
+    propagator(a, b, sum,
+        abc = Double::plus,
+        cab = Double::minus,
+        cba = Double::minus
+    )
 
-fun Double.Companion.adder(a: Cell<Double>, b: Cell<Double>, out: Cell<Double>) =
-    propagator("+", a, b, out) { x, y -> x + y }
+fun doubleProduct(a: Cell<Double>, b: Cell<Double>, product: Cell<Double>) =
+    propagator(a, b, product,
+        abc = Double::times,
+        cab = Double::div,
+        cba = Double::div
+    )
 
-fun Double.Companion.subtractor(a: Cell<Double>, b: Cell<Double>, out: Cell<Double>) =
-    propagator("-", a, b, out) { x, y -> x - y }
-
-fun Double.Companion.multiplier(a: Cell<Double>, b: Cell<Double>, out: Cell<Double>) =
-    propagator("*", a, b, out) { x, y -> x * y }
-
-fun Double.Companion.divider(a: Cell<Double>, b: Cell<Double>, out: Cell<Double>) =
-    propagator("/", a, b, out) { x, y -> x / y }
-
-fun Double.Companion.sum(a: Cell<Double>, b: Cell<Double>, sum: Cell<Double>) {
-    adder(a, b, sum)
-    subtractor(sum, a, b)
-    subtractor(sum, b, a)
-}
-
-fun Double.Companion.product(a: Cell<Double>, b: Cell<Double>, product: Cell<Double>) {
-    multiplier(a, b, product)
-    divider(product, a, b)
-    divider(product, b, a)
-}
-
-fun Double.Companion.quadratic(a: Cell<Double>, square: Cell<Double>) {
-    propagator("square", a, square) { x -> x * x }
-    propagator("sqrt", square, a) { x -> Math.sqrt(x) }
-}
+fun doubleQuadratic(a: Cell<Double>, square: Cell<Double>) =
+    propagator(a, square,
+        ab = { x -> x * x },
+        ba = Math::sqrt
+    )

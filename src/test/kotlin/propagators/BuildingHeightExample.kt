@@ -1,14 +1,18 @@
 package propagators
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.collections.beIn
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.beInstanceOf
-import propagators.types.*
+import propagators.types.ClosedRangeData
+import propagators.types.doubleClosedRangeProduct
+import propagators.types.doubleClosedRangeQuadratic
 
 class BuildingHeightExample: StringSpec({
+
+    fun Scheduler.makeDoubleRangeCell(name: String) =
+        Cell(name, this, ClosedRangeData<Double>())
 
     fun Scheduler.similarTriangles(
         s1: Cell<ClosedRange<Double>>,
@@ -16,8 +20,8 @@ class BuildingHeightExample: StringSpec({
         s2: Cell<ClosedRange<Double>>,
         h2: Cell<ClosedRange<Double>>) {
         val ratio = makeDoubleRangeCell("ratio")
-        DoubleRangeData.product(s1, ratio, h1)
-        DoubleRangeData.product(s2, ratio, h2)
+        doubleClosedRangeProduct(s1, ratio, h1)
+        doubleClosedRangeProduct(s2, ratio, h2)
     }
 
     class Fixture {
@@ -38,9 +42,9 @@ class BuildingHeightExample: StringSpec({
         init {
             constant(9.789.rangeTo(9.832), g)
             constant(0.5.rangeTo(0.5), half)
-            DoubleRangeData.quadratic(fallTime, tSq)
-            DoubleRangeData.product(g, tSq, gtSq)
-            DoubleRangeData.product(half, gtSq, buildingHeight)
+            doubleClosedRangeQuadratic(fallTime, tSq)
+            doubleClosedRangeProduct(g, tSq, gtSq)
+            doubleClosedRangeProduct(half, gtSq, buildingHeight)
 
             scheduler.similarTriangles(barometerShadow, barometerHeight, buildingShadow, buildingHeight)
         }

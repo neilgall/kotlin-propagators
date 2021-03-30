@@ -2,18 +2,18 @@ package propagators
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import propagators.types.makeIntCell
-import propagators.types.product
-import propagators.types.sum
+import propagators.types.*
 
 class PropagationInAnyDirection : StringSpec({
+
+    fun Scheduler.makeIntCell(name: String) = Cell(name, this, IntData)
 
     "sum forward" {
         QueueScheduler().run {
             val a = makeIntCell("a")
             val b = makeIntCell("b")
             val c = makeIntCell("c")
-            Int.sum(a, b, c)
+            intSum(a, b, c)
             a.addContent(123)
             b.addContent(42)
             run()
@@ -26,7 +26,7 @@ class PropagationInAnyDirection : StringSpec({
             val a = makeIntCell("a")
             val b = makeIntCell("b")
             val c = makeIntCell("c")
-            Int.sum(a, b, c)
+            intSum(a, b, c)
             b.addContent(42)
             c.addContent(165)
             run()
@@ -39,7 +39,7 @@ class PropagationInAnyDirection : StringSpec({
             val a = makeIntCell("a")
             val b = makeIntCell("b")
             val c = makeIntCell("c")
-            Int.sum(a, b, c)
+            intSum(a, b, c)
             a.addContent(123)
             c.addContent(165)
             run()
@@ -52,7 +52,7 @@ class PropagationInAnyDirection : StringSpec({
             val a = makeIntCell("a")
             val b = makeIntCell("b")
             val c = makeIntCell("c")
-            Int.product(a, b, c)
+            intProduct(a, b, c)
             a.addContent(123)
             b.addContent(42)
             run()
@@ -65,7 +65,7 @@ class PropagationInAnyDirection : StringSpec({
             val a = makeIntCell("a")
             val b = makeIntCell("b")
             val c = makeIntCell("c")
-            Int.product(a, b, c)
+            intProduct(a, b, c)
             b.addContent(42)
             c.addContent(5166)
             run()
@@ -78,7 +78,7 @@ class PropagationInAnyDirection : StringSpec({
             val a = makeIntCell("a")
             val b = makeIntCell("b")
             val c = makeIntCell("c")
-            Int.product(a, b, c)
+            intProduct(a, b, c)
             a.addContent(123)
             c.addContent(5166)
             run()
