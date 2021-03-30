@@ -3,14 +3,11 @@ package propagators.types
 import propagators.*
 
 object IntData: Data<Int> {
-    override fun Int.isRedundant(other: Int): Boolean =
-        this == other
-
-    override fun Int.merge(other: Int): Content<Int> =
+    override fun Int.merge(other: Int): MergeResult<Int> =
         if (this == other)
-            Content.Value(this)
-            else
-                Content.Contradiction("$other !+ $this")
+            MergeResult.Redundant
+        else
+            MergeResult.Contradiction("$other != $this")
 }
 
 fun Scheduler.makeIntCell(name: String): Cell<Int> =

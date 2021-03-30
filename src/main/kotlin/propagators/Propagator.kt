@@ -1,6 +1,6 @@
 package propagators
 
-class Propagator(val name: String, val f: () -> Unit) {
+class Propagator(private val name: String, private val f: () -> Unit) {
     operator fun invoke() { f() }
     override fun toString(): String = name
 }

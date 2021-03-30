@@ -3,14 +3,11 @@ package propagators.types
 import propagators.*
 
 object DoubleData : Data<Double> {
-    override fun Double.isRedundant(other: Double): Boolean =
-        this == other
-
-    override fun Double.merge(other: Double): Content<Double> =
+    override fun Double.merge(other: Double): MergeResult<Double> =
         if (this == other)
-            Content.Value(this)
+            MergeResult.Redundant
         else
-            Content.Contradiction("$other !+ $this")
+            MergeResult.Contradiction("$other != $this")
 }
 
 fun Scheduler.makeDoubleCell(name: String): Cell<Double> =

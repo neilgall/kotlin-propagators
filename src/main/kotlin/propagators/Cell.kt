@@ -1,22 +1,5 @@
 package propagators
 
-sealed class Content<out T> {
-    object Empty : Content<Nothing>()
-    data class Value<T>(val value: T) : Content<T>()
-    data class Contradiction(val describe: String) : Content<Nothing>()
-
-    final override fun toString(): String = when (this) {
-        is Empty -> "{}"
-        is Value<T> -> "{$value}"
-        is Contradiction -> "contradiction($describe)"
-    }
-}
-
-interface Data<T> {
-    fun T.isRedundant(other: T): Boolean
-    fun T.merge(other: T): Content<T>
-}
-
 class Cell<T>(private val name: String, private val scheduler: Scheduler, private val data: Data<T>) {
 
     private val neighbours: MutableSet<Propagator> = mutableSetOf()
@@ -39,13 +22,21 @@ class Cell<T>(private val name: String, private val scheduler: Scheduler, privat
             is Content.Empty -> {
                 content = Content.Value(newContent)
             }
-            is Content.Value<T> -> data.run {
-                if (!oldContent.value.isRedundant(newContent)) {
-                    content = oldContent.value.merge(newContent)
-                }
-            }
             is Content.Contradiction -> {
-                // nothing to do
+                // do nothing
+            }
+            is Content.Value<T> -> data.run {
+                when (val merged = oldContent.value.merge(newContent)) {
+                    is MergeResult.Redundant -> {
+                        // do nothing
+                    }
+                    is MergeResult.Value<T> -> {
+                        content = Content.Value(merged.value)
+                    }
+                    is MergeResult.Contradiction -> {
+                        content = Content.Contradiction(merged.contradiction)
+                    }
+                }
             }
         }
     }
