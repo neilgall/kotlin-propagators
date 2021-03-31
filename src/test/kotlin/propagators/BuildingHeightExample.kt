@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.beInstanceOf
 import propagators.types.ClosedRangeData
 import propagators.types.doubleClosedRangeProduct
@@ -51,10 +52,11 @@ class BuildingHeightExample: StringSpec({
     }
 
     fun check(c: Cell<ClosedRange<Double>>, expectedRange: ClosedRange<Double>, tolerance: Double) {
-        c.content should beInstanceOf<Content.Value<ClosedRange<Double>>>()
-        val v = (c.content as Content.Value<ClosedRange<Double>>).value
-        v.start shouldBe expectedRange.start.plusOrMinus(tolerance)
-        v.endInclusive shouldBe expectedRange.endInclusive.plusOrMinus(tolerance)
+        c.content should beInstanceOf<Content.Value<Double>>()
+        with(c.content) {
+            value?.start shouldBe expectedRange.start.plusOrMinus(tolerance)
+            value?.endInclusive shouldBe expectedRange.endInclusive.plusOrMinus(tolerance)
+        }
     }
 
     "estimate height using fall time" {

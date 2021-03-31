@@ -26,7 +26,7 @@ class Cell<T>(private val name: String, private val scheduler: Scheduler, privat
                 // do nothing
             }
             is Content.Value<T> -> data.run {
-                when (val result = oldContent.value.merge(newContent)) {
+                when (val result = oldContent.value_.merge(newContent)) {
                     is MergeResult.Redundant -> {
                         // do nothing
                     }

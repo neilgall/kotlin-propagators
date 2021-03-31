@@ -22,3 +22,9 @@ val intProduct = Propagator2<Int, Int, Int>(
     cab = Int::div,
     cba = Int::div
 )
+
+val intEquals = Propagator2(
+    abc = Int::equals,
+    cab = { c, a -> if (c) a else null },
+    cba = { c, b -> if (c) b else null }
+)

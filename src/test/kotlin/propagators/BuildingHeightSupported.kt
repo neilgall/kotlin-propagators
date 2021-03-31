@@ -56,11 +56,11 @@ class BuildingHeightSupported: StringSpec({
     }
 
     fun check(c: Cell<Supported<ClosedRange<Double>>>, expectedRange: ClosedRange<Double>, tolerance: Double, vararg support: Premise) {
-        c.content should beInstanceOf<Content.Value<Supported<ClosedRange<Double>>>>()
-        val v = (c.content as Content.Value<Supported<ClosedRange<Double>>>).value
-        v.value.start shouldBe expectedRange.start.plusOrMinus(tolerance)
-        v.value.endInclusive shouldBe expectedRange.endInclusive.plusOrMinus(tolerance)
-        v.premises shouldContainExactlyInAnyOrder support.toSet()
+        with (c.content) {
+            value?.value?.start shouldBe expectedRange.start.plusOrMinus(tolerance)
+            value?.value?.endInclusive shouldBe expectedRange.endInclusive.plusOrMinus(tolerance)
+            value?.premises shouldContainExactlyInAnyOrder support.toSet()
+        }
     }
 
     "estimate height using fall time" {
