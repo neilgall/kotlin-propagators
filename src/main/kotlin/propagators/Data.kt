@@ -23,4 +23,7 @@ sealed class MergeResult<out T> {
 
 interface Data<T> {
     fun T.merge(other: T): MergeResult<T>
+
+    fun T.subsumes(other: T): Boolean =
+        merge(other) is MergeResult.Redundant
 }

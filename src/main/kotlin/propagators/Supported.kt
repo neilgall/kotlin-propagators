@@ -19,6 +19,9 @@ fun <T> Data<T>.supported(): Data<Supported<T>> = object : Data<Supported<T>> {
             is MergeResult.Contradiction ->
                 MergeResult.Contradiction("${result.contradiction}: ${this.premises} vs ${other.premises}")
         }
+
+    override fun Supported<T>.subsumes(other: Supported<T>): Boolean =
+        merge(other) is MergeResult.Redundant && other.premises.containsAll(premises)
 }
 
 fun <A, B> Propagator1<A, B>.supported(): Propagator1<Supported<A>, Supported<B>> =

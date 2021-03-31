@@ -102,4 +102,14 @@ class BuildingHeightSupported: StringSpec({
             check(buildingHeight, 44.514.rangeTo(48.978), 0.0005, "shadows")
         }
     }
+
+    "higher quality information supercedes lower quality" {
+        Fixture().run {
+            buildingShadow.addContent(54.9.rangeTo(55.1).supported("shadows"))
+            barometerHeight.addContent(0.3.rangeTo(0.32).supported("shadows"))
+            barometerShadow.addContent(0.36.rangeTo(0.37).supported("shadows"))
+            buildingHeight.addContent(45.0.rangeTo(45.0).supported("superintendent"))
+            check(buildingHeight, 45.0.rangeTo(45.0), 0.0005, "superintendent")
+        }
+    }
 })
