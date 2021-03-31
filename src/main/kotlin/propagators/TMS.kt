@@ -7,7 +7,7 @@ class TMS<T>(views: Collection<Supported<T>> = emptySet()) {
         internal set
 }
 
-fun <T: Any> T.tms(vararg premises: Premise): TMS<T> =
+fun <T : Any> T.tms(vararg premises: Premise): TMS<T> =
     TMS(setOf(this.supported(*premises)))
 
 
@@ -17,8 +17,8 @@ class TMSData<T>(data: Data<T>) : Data<TMS<T>> {
     override fun TMS<T>.merge(other: TMS<T>): MergeResult<TMS<T>> {
         val candidate = assimilate(other)
         val consequence = candidate.strongestConsequence(worldView)
-        val better = candidate.assimilateOne(consequence)
-        return if (better === this)
+        val better = consequence?.let { candidate.assimilateOne(it) }
+        return if (better == null || better === this)
             MergeResult.Redundant
         else
             MergeResult.Replaced(better)
@@ -27,7 +27,7 @@ class TMSData<T>(data: Data<T>) : Data<TMS<T>> {
     private fun TMS<T>.assimilate(tms: TMS<T>): TMS<T> =
         tms.views.fold(this) { tms, view -> tms.assimilateOne(view) }
 
-    internal fun TMS<T>.assimilateOne(view: Supported<T>): TMS<T> =
+    private fun TMS<T>.assimilateOne(view: Supported<T>): TMS<T> =
         supportedData.run {
             if (views.any { it.subsumes(view) })
                 this@assimilateOne
@@ -35,24 +35,29 @@ class TMSData<T>(data: Data<T>) : Data<TMS<T>> {
                 TMS(views.filterNot { view.subsumes(it) } + view)
         }
 
-    internal fun TMS<T>.strongestConsequence(query: Set<Premise>): Supported<T> =
+    private fun TMS<T>.strongestConsequence(query: Set<Premise>): Supported<T>? =
         supportedData.run {
-            views.filter { query.containsAll(it.premises) }
-                .reduce { v1, v2 ->
-                    when (val m = v1.merge(v2)) {
+            val relevant = views.filter { query.containsAll(it.premises) }
+            when (relevant.size) {
+                0 -> null
+                1 -> relevant.first()
+                else -> relevant.reduce { v1: Supported<T>?, v2: Supported<T> ->
+                    when (val m = v1?.merge(v2)) {
                         is MergeResult.Replaced -> m.value
                         is MergeResult.Merged -> m.value
-                        else -> v1
+                        is MergeResult.Redundant -> v1
+                        else -> null
                     }
                 }
+            }
         }
 
     var worldView: Set<Premise> = emptySet()
 
-    fun TMS<T>.query(view: Set<Premise> = worldView): Supported<T> {
-        val consequence = strongestConsequence(view)
-        val better = assimilateOne(consequence)
-        if (better !== this) {
+    fun TMS<T>.query(vararg view: Premise): Supported<T>? {
+        val consequence = strongestConsequence(if (view.isEmpty()) worldView else view.toSet())
+        val better = consequence?.let { assimilateOne(it) }
+        if (better != null && better !== this) {
             views = better.views
         }
         return consequence

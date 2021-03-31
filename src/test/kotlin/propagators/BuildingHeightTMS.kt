@@ -62,7 +62,7 @@ class BuildingHeightTMS: StringSpec({
             vararg support: Premise
         ) {
             tmsDoubleRangeData.run {
-                val result = c.content.value?.query(support.toSet())
+                val result = c.content.value?.query(*support)
                 result?.value?.start shouldBe expectedRange.start.plusOrMinus(tolerance)
                 result?.value?.endInclusive shouldBe expectedRange.endInclusive.plusOrMinus(tolerance)
                 result?.premises shouldContainExactlyInAnyOrder support.toSet()
@@ -95,6 +95,7 @@ class BuildingHeightTMS: StringSpec({
             barometerHeight.addContent(0.3.rangeTo(0.32).tms("shadows"))
             barometerShadow.addContent(0.36.rangeTo(0.37).tms("shadows"))
             scheduler.run()
+            buildingHeight.content.value?.views?.size shouldBe 2
             check(buildingHeight, 44.514.rangeTo(47.243), 0.0005, "fall time", "shadows")
         }
     }
